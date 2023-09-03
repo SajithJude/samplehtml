@@ -514,6 +514,11 @@ let presentationModeActive = false;
 let originalCanvasDimensions = { width: 0, height: 0 };
 
 document.addEventListener('keydown', function (event) {
+
+    if (event.key === 't' || event.key === 'T') {
+        // Stop the speech
+        window.speechSynthesis.cancel();
+      }
     // Check if Ctrl and Space are pressed together
     if (event.ctrlKey && event.key === ' ') {
         // Toggle presentation mode
