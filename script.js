@@ -514,7 +514,7 @@ let presentationModeActive = false;
 let originalCanvasDimensions = { width: 0, height: 0 };
 
 document.addEventListener('keydown', function (event) {
-
+// check is T is pressed
     if (event.key === 't' || event.key === 'T') {
         // Stop the speech
         window.speechSynthesis.cancel();
