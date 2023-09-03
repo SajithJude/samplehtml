@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide Viewer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v6.0.0-beta3/css/all.css">
+
+    <!-- <link href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro@4cac1a6/css/all.css" rel="stylesheet" type="text/css" /> -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    // Populate voice selection dropdown
+    const voiceSelect = document.getElementById('voice');
+    const voices = window.speechSynthesis.getVoices();
+  
+    voices.forEach((voice, i) => {
+      const option = document.createElement('option');
+      option.value = i;
+      option.innerHTML = `${voice.name} (${voice.lang})`;
+      voiceSelect.appendChild(option);
+    });
+  });
+
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // Populate voice selection dropdown
+    const voiceSelect = document.getElementById('voice');
+    const voices = window.speechSynthesis.getVoices();
+  
+    voices.forEach((voice, i) => {
+      const option = document.createElement('option');
+      option.value = i;
+      option.innerHTML = `${voice.name} (${voice.lang})`;
+      voiceSelect.appendChild(option);
+    });
+  });
+
+
+    </script>
+</head>
+
+<body>
+
+    <div id="contextMenu" class="context-menu">
+        <ul>
+            <li id="setAsBackground">Set as Background</li>
+        </ul>
+    </div>
+
+
+
+    <input type="file" id="jsonInput" accept=".json">
+    <div id="minimap"></div>
+    <canvas id="mainCanvas"></canvas>
+    <textarea id="voiceOverScript" style="width: 600px; height: 70px; margin-top: 10px;"></textarea> <!-- New line -->
+
+    <div id="toolbar">
+        <!-- <h3>Properties</h3> -->
+        <div class="expandable-section">
+            <h4>Add</h4>
+
+            <div class="expandable-content">
+
+                <div class="toolbar-row">
+                   
+                        <button id="addText" title="Add Text">
+                            <i class="far fa-text"></i>
+                        </button>
+                   
+                   
+                        <button id="addImage" title="Add Image">
+                            <i class="far fa-image"></i>
+                        </button>
+                   
+                   
+                        <button id="deleteSlide" title="Delete Slide">
+                            <i class="far fa-trash-alt"></i>
+                        </button>
+                   
+                </div>
+                
+                
+
+            </div>
+
+        </div>
+
+        <div class="expandable-section">
+            <h4>Layout</h4>
+
+            <div class="expandable-content">
+                <!-- <div class="toolbar-row"> -->
+                <div class="toolbar-row">
+                    <button id="alignTop"><i class="fa-thin fa-objects-align-top"></i></button>
+                    <button id="alignBottom"><i class="fa-thin fa-objects-align-bottom"></i></button>
+                    <button id="alignLeft"><i class="fa-thin fa-objects-align-left"></i></button>
+
+                </div>
+
+                <div class="toolbar-row">
+                    <button id="alignRight"><i class="fa-thin fa-objects-align-right"></i></button>
+                    <button id="alignCenterHorizontal"><i
+                            class="fa-regular fa-objects-align-center-horizontal"></i></button>
+                    <button id="alignCenterVertical"><i
+                            class="fa-regular fa-objects-align-center-vertical"></i></button>
+                </div>
+                <!-- </div> -->
+
+            </div>
+
+            <div class="expandable-content">
+
+                <div class="toolbar-row">
+                    <div class="toolbar-item">
+                        <label for="objectLeft" title="Horizontal Position"><i class="far fa-x"></i></label>
+                        <input type="number" id="objectLeft" />
+                    </div>
+                    <div class="toolbar-item">
+                        <label for="objectTop" title="Vertical Position"><i class="far fa-y"></i></label>
+                        <input type="number" id="objectTop" />
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="expandable-content">
+
+                <div class="toolbar-row">
+                    <div class="toolbar-item">
+                        <label for="objectWidth" title="Width"><i class="far fa-w"></i></label>
+                        <input type="number" id="objectWidth" />
+                    </div>
+                    <div class="toolbar-item">
+                        <label for="objectHeight" title="Height"><i class="far fa-h"></i></label>
+                        <input type="number" id="objectHeight" />
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="expandable-content">
+                <div class="toolbar-row">
+                    <div class="toolbar-item"><label for="objectAngle"><i class="far fa-angle"></i></label><input
+                            type="number" id="objectAngle" /></div>
+                    <div class="toolbar-item"><label for="objectScale"><i
+                                class="far fa-expand-arrows-alt"></i></label><input type="number" id="objectScale"
+                            step="0.1" min="0.1" max="5" /></div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="expandable-section">
+            <h4>Text</h4>
+
+            <div class="expandable-content">
+                <div class="toolbar-row">
+                    <div class="toolbar-item">
+                        <!-- <label for="objectFont" title="Font"><i class="fas fa-font"></i></label> -->
+                        <select id="objectFont">
+                            <option value="Arial">Arial</option>
+                            <option value="Courier New">Courier New</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                        </select>
+                    </div>
+                    <div class="toolbar-item">
+                        <label for="objectFontSize" title="Font Size"><i class="far fa-line-height"></i></label>
+                        <input type="number" id="objectFontSize" min="1" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="expandable-content">
+                <div class="toolbar-row">
+                    <button id="boldText"><i class="fas fa-bold"></i></button>
+                    <button id="underlineText"><i class="fas fa-underline"></i></button>
+                    <button id="alignLeft"><i class="fas fa-align-left"></i></button>
+                    <button id="alignCenter"><i class="fas fa-align-center"></i></button>
+                    <button id="alignRight"><i class="fas fa-align-right"></i></button>
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="expandable-content">
+
+                <div class="toolbar-row">
+                    <div class="toolbar-item">
+                        <label for="objectOpacity" title="Opacity"><i class="fas fa-adjust"></i></label>
+                        <input type="range" id="objectOpacity" min="0" max="1" step="0.1" />
+                    </div>
+
+                    <div class="toolbar-item">
+                        <label for="objectCharSpacing" title="Character Spacing"><i
+                                class="fas fa-text-width"></i></label>
+                        <input type="number" id="objectCharSpacing" />
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="expandable-content">
+                <div class="toolbar-row">
+                    <div class="toolbar-item">
+                        <input type="color" id="objectColor" />
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="expandable-content">
+                <div class="toolbar-row">
+
+                    <div class="toolbar-item">
+
+                    </div>
+                    <div class="toolbar-item">
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="expandable-section">
+            <h4>Animation</h4>
+
+            <div class="expandable-content">
+                <div class="toolbar-row">
+                    <div class="toolbar-item">
+                        <!-- <label for="animationType" title="Animation Type">Type</label> -->
+                        <select id="animationType">
+                            <option value="none">None</option>
+                            <option value="fadeIn">Fade In</option>
+                            <option value="fadeOut">Fade Out</option>
+                            <option value="slideIn">Slide In</option>
+                            <option value="slideOut">Slide Out</option>
+                        </select>
+                    </div>
+                    <div class="toolbar-item">
+
+                        <label for="animationDuration" title="Duration"><i class="fa-regular fa-timer"></i></label>
+                        <input type="number" id="animationDuration" min="10000" max="500000" step="10000" value="1000">
+                    </div>
+                    <div class="toolbar-item">
+                        <button id="previewAnimation"><i class="fas fa-play"></i> Preview</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="expandable-section">
+            <h4>Speech</h4>
+
+            <div class="expandable-content">
+                <div class="toolbar-row">
+                   
+                        <form id="speechForm">
+                            <label for="voice">Voice:</label>
+                            <select id="voice"></select><br>
+                          
+                            <label for="volume">Volume:</label>
+                            <input type="range" id="volume" min="0" max="1" step="0.1" value="1"><br>
+                          
+                            <label for="rate">Rate:</label>
+                            <input type="range" id="rate" min="0.1" max="10" step="0.1" value="1"><br>
+                          
+                            <label for="pitch">Pitch:</label>
+                            <input type="range" id="pitch" min="0" max="2" step="0.1" value="1"><br>
+                          
+                            <label for="text">Text:</label>
+                            <textarea id="text"></textarea><br>
+                          
+                            <button type="button" onclick="speak()">Speak</button>
+                          </form>
+                          
+                </div>
+                   
+               
+            </div>
+        </div>
+
+    </div>
+ <script src="script.js">
+
+ </script>
+</body>
+
+</html>

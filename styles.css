@@ -1,0 +1,171 @@
+
+.context-menu {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.context-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.context-menu li {
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+
+#minimap {
+    display: flex;
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+
+
+.minimap-item {
+   
+        width: 150px;
+        height: 100px;
+        background-color: transparent;
+        /* ...existing styles... */
+  
+    
+    border: 1px solid #ccc;
+    cursor: pointer;
+    padding: 5px;
+    transition: 0.3s;
+}
+.minimap-item {
+    position: relative;
+}
+
+.minimap-item > div {
+    position: absolute;
+}
+
+.add-slide-button {
+    margin-right:10px ;
+    left: 0;
+    bottom: 0;
+}
+
+.play-all-button {
+    top: 0;
+    left: 0;
+}
+
+
+.minimap-item i.far.fa-plus {
+    visibility: hidden;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    /* transform: translateY(-50%); */
+}
+
+.minimap-item:hover i.far.fa-plus {
+    visibility: visible;
+    /* transform: translateY(-50%); */
+}
+
+
+.minimap-item:hover {
+    background-color: #f0f0f0;
+}
+
+#mainCanvas {
+    width: 600px;
+    height: 330px;
+    border: 1px solid #000;
+}
+
+#toolbar {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #fffffff8;
+    border-left: 1px solid #ccc;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+
+#toolbar h3 {
+    margin: 0;
+    padding: 0;
+    font-size: 1.2em;
+}
+
+.expandable-section-content {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.toolbar-row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.toolbar-item {
+    width: calc(50% - 3px);
+    padding: 2px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: stretch;
+}
+
+.toolbar-item label {
+    display: flex;
+    width: 30px;
+    font-weight: bold;
+    justify-content:center;
+    align-items: center;
+    border-radius: 10px;
+    margin-right: 5px;
+    background-color: #ccccccaa;
+    /* margin-right: 10px; */
+}
+
+.toolbar-item input,
+.toolbar-item select {
+    flex-grow: 1;
+    /* padding: 3px; */
+    width: 50%;
+    border-radius: 9px;
+    box-sizing: border-box;
+    border: 1px solid #00000082;
+}
+
+.expandable-section h4 {
+    cursor: pointer;
+    background: #f1f1f1;
+    /* padding: 10px; */
+    border-bottom: 1px solid #ccc;
+}
+
+.expandable-section h4:after {
+    content: '\002B';
+    float: right;
+}
+
+.expandable-section h4.active:after {
+    margin: 0;
+    content: "\2212";
+}
+
+.expandable-section h4.active + .expandable-section-content,
+.expandable-section h4.active ~ .expandable-section-content {
+    display: flex;
+}
