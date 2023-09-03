@@ -1,0 +1,9 @@
+{
+    "dev": {
+        "app_function": "app.app",
+        "profile_name": "default",
+        "project_name": "htmlcsseditpr",
+        "runtime": "python3.10",
+        "s3_bucket": "zappa-9vxq2v6r7"
+    }
+}
