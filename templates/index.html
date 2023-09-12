@@ -60,7 +60,7 @@
 
     <div id="toolbar">
         <!-- <h3>Properties</h3> -->
-        <div class="expandable-section">
+        <div class="expandable-section"  id="addSection">
             <h4>Add</h4>
 
             <div class="expandable-content">
@@ -68,17 +68,17 @@
                 <div class="toolbar-row">
                    
                         <button id="addText" title="Add Text">
-                            <i class="far fa-text"></i>
+                            <i class="fad fa-text"></i>
                         </button>
                    
                    
                         <button id="addImage" title="Add Image">
-                            <i class="far fa-image"></i>
+                            <i class="fad fa-image"></i>
                         </button>
                    
                    
                         <button id="deleteSlide" title="Delete Slide">
-                            <i class="far fa-trash-alt"></i>
+                            <i class="fad fa-trash-alt"></i>
                         </button>
                    
                 </div>
@@ -89,38 +89,47 @@
 
         </div>
 
-        <div class="expandable-section">
+        <div class="expandable-section" id="layoutSection" >
             <h4>Layout</h4>
 
             <div class="expandable-content">
-                <!-- <div class="toolbar-row"> -->
+                <!-- New toolbar row for distribute icons -->
+                
                 <div class="toolbar-row">
-                    <button id="alignTop"><i class="fa-thin fa-objects-align-top"></i></button>
-                    <button id="alignBottom"><i class="fa-thin fa-objects-align-bottom"></i></button>
-                    <button id="alignLeft"><i class="fa-thin fa-objects-align-left"></i></button>
-
+                  <button id="distributeVertically"><i class="fad fa-distribute-spacing-vertical"></i></button>
+                  <button id="alignTop"><i class="fad fa-objects-align-top"></i></button>
+                  <button id="alignBottom"><i class="fad fa-objects-align-bottom"></i></button>
+                  <button id="alignLeft"><i class="fad fa-objects-align-left"></i></button>
                 </div>
-
+                
                 <div class="toolbar-row">
-                    <button id="alignRight"><i class="fa-thin fa-objects-align-right"></i></button>
-                    <button id="alignCenterHorizontal"><i
-                            class="fa-regular fa-objects-align-center-horizontal"></i></button>
-                    <button id="alignCenterVertical"><i
-                            class="fa-regular fa-objects-align-center-vertical"></i></button>
+                  <button id="distributeHorizontally"><i class="fad fa-distribute-spacing-horizontal"></i></button>
+                  <button id="alignRight"><i class="fad fa-objects-align-right"></i></button>
+                  <button id="alignCenterHorizontal"><i class="fad fa-objects-align-center-horizontal"></i></button>
+                  <button id="alignCenterVertical"><i class="fad fa-objects-align-center-vertical"></i></button>
                 </div>
-                <!-- </div> -->
+              
+                <!-- New toolbar row for bring forward, bring backward, to front and to back -->
+                <div class="toolbar-row">
+                  <button id="bringForward"><i class="fad fa-bring-forward"></i></button>
+                  <button id="bringBackward"><i class="fad fa-send-back"></i></button>
+                  <button id="toFront"><i class="fad fa-bring-front"></i></button>
+                  <button id="toBack"><i class="fad fa-send-backward"></i></button>
+                </div>
+              
+              </div>
+              
+            
 
-            </div>
-
-            <div class="expandable-content">
+            <div class="expandable-content" >
 
                 <div class="toolbar-row">
                     <div class="toolbar-item">
-                        <label for="objectLeft" title="Horizontal Position"><i class="far fa-x"></i></label>
+                        <label for="objectLeft" title="Horizontal Position"><i class="fad fa-x"></i></label>
                         <input type="number" id="objectLeft" />
                     </div>
                     <div class="toolbar-item">
-                        <label for="objectTop" title="Vertical Position"><i class="far fa-y"></i></label>
+                        <label for="objectTop" title="Vertical Position"><i class="fad fa-y"></i></label>
                         <input type="number" id="objectTop" />
                     </div>
                 </div>
@@ -131,11 +140,11 @@
 
                 <div class="toolbar-row">
                     <div class="toolbar-item">
-                        <label for="objectWidth" title="Width"><i class="far fa-w"></i></label>
+                        <label for="objectWidth" title="Width"><i class="fad fa-w"></i></label>
                         <input type="number" id="objectWidth" />
                     </div>
                     <div class="toolbar-item">
-                        <label for="objectHeight" title="Height"><i class="far fa-h"></i></label>
+                        <label for="objectHeight" title="Height"><i class="fad fa-h"></i></label>
                         <input type="number" id="objectHeight" />
                     </div>
                 </div>
@@ -144,17 +153,17 @@
 
             <div class="expandable-content">
                 <div class="toolbar-row">
-                    <div class="toolbar-item"><label for="objectAngle"><i class="far fa-angle"></i></label><input
+                    <div class="toolbar-item"><label for="objectAngle"><i class="fad fa-angle"></i></label><input
                             type="number" id="objectAngle" /></div>
                     <div class="toolbar-item"><label for="objectScale"><i
-                                class="far fa-expand-arrows-alt"></i></label><input type="number" id="objectScale"
+                                class="fad fa-expand-arrows-alt"></i></label><input type="number" id="objectScale"
                             step="0.1" min="0.1" max="5" /></div>
 
                 </div>
             </div>
         </div>
 
-        <div class="expandable-section">
+        <div class="expandable-section" id="textSection" >
             <h4>Text</h4>
 
             <div class="expandable-content">
@@ -168,7 +177,7 @@
                         </select>
                     </div>
                     <div class="toolbar-item">
-                        <label for="objectFontSize" title="Font Size"><i class="far fa-line-height"></i></label>
+                        <label for="objectFontSize" title="Font Size"><i class="fad fa-line-height"></i></label>
                         <input type="number" id="objectFontSize" min="1" />
                     </div>
                 </div>
@@ -235,7 +244,7 @@
         </div>
 
 
-        <div class="expandable-section">
+        <div class="expandable-section"  id="animationSection">
             <h4>Animation</h4>
 
             <div class="expandable-content">
@@ -264,7 +273,7 @@
 
 
 
-        <div class="expandable-section">
+        <div class="expandable-section" id="speechSection">
             <h4>Speech</h4>
 
             <div class="expandable-content">

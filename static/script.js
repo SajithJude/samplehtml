@@ -6,7 +6,7 @@ let mainCanvas = new fabric.Canvas("mainCanvas", {
   //   fireMiddleClick: true, // <-- enable firing of middle click events
   stopContextMenu: true, // <--  prevent context menu from showing
 });
-let slidesData;
+// let slidesData;
 
 // function speakText(text) {
 //     const speechSynthesis = window.speechSynthesis;
@@ -153,93 +153,300 @@ function handleFileUpload(event) {
     let reader = new FileReader();
     reader.onload = function (e) {
       let content = e.target.result;
+      // slidesData = JSON.parse(content);
       slidesData = JSON.parse(content);
+      console.log("Parsed JSON from uploaded file:", slidesData);  // Debugging Step 1
       populateMinimap(slidesData);
     };
     reader.readAsText(file);
   }
 }
 
+
+function switchSlide(index) {
+  if (index >= 0 && index < slidesData.slides.length) {
+    // Save the current slide's state
+    slidesData.slides[currentSlideIndex].canvas = mainCanvas.toJSON();
+
+    // Update currentSlideIndex
+    currentSlideIndex = index;
+    // Load the next slide's state
+    const slideData = slidesData.slides[currentSlideIndex];
+    renderSlide(slideData,currentSlideIndex,mainCanvas)
+
+    // mainCanvas.loadFromJSON(slideData.canvas, mainCanvas.renderAll.bind(mainCanvas));
+  }
+}
+
+
+let thumbCanvasArray = [];  // Array to store Fabric canvases for thumbnails
+let fabricObjects = [];
+let currentSlideIndex = 0;
+let slidesData = {
+  slides: []  // Your slides array, which should be initialized with your data
+};
+
+function renderSlide(slide, index,canvas, animate = false) {
+  console.log("Rendering slide with data:", slide);
+
+
+  
+
+
+
+  // if (slidesData.slides[currentSlideIndex]) {
+  // }
+  if (canvas === mainCanvas) {
+
+    // slidesData.slides[currentSlideIndex].canvas = canvas.toJSON();
+    
+    const voiceOverScript = document.getElementById("voiceOverScript");
+    voiceOverScript.value = slide.speech || "";
+    // currentSlideIndex = index;
+  canvas.clear();
+
+    canvas.setWidth(slide.canvas.width || 600);
+    canvas.setHeight(slide.canvas.height || 337.7);
+    canvas.renderAll();
+
+    
+  // const fabricObjects = [];
+  // const objects = slide.canvas.objects;
+    // canvas.clear();
+    // for (let i = 0; i < (objects && objects.length); i++) {
+    
+    //   const obj = objects[i];
+    //   console.log("Processing object:", obj); // Debugging inside loop
+    //   let fabricObj;
+  
+  
+    //   switch (obj.type) {
+    //     case "video":
+    //       var videoEl = document.createElement("video");
+    //       var sourceEl = document.createElement("source");
+    //       sourceEl.src = obj.src;
+    //       videoEl.appendChild(sourceEl);
+    //       var videoObj = new fabric.Image(videoEl, obj);
+    //       canvas.add(videoObj);
+    //       videoObj.getElement().play();
+    //       fabricObj = videoObj;
+  
+    //       break;
+    //     case "rect":
+    //       var rectObj = new fabric.Rect(obj);
+    //       canvas.add(rectObj);
+    //       fabricObj = rectObj;
+  
+    //       break;
+    //     case "i-text":
+    //       var textbox = new fabric.IText(obj.text, obj);
+    //       canvas.add(textbox);
+    //       fabricObj = textbox;
+  
+    //       break;
+    //     case "image":
+    //       delete obj.clipPath;
+    //       var imageElement = document.createElement("img");
+  
+    //       imageElement.setAttribute("src", obj.src);
+    //       // Initiate an Image object
+    //       var image = new fabric.Image(imageElement);
+    //       image.set(obj);
+    //       canvas.add(image);
+    //       fabricObj = image;
+  
+    //       break;
+    //     case "circle":
+    //       var cirObj = new fabric.Circle(obj);
+    //       canvas.add(cirObj);
+    //       fabricObj = cirObj;
+  
+    //       break;
+    //     default:
+    //       console.log("Unknown object type:", obj.type);
+    //       break;
+    //   }
+  
+    //   fabricObjects.push(fabricObj);
+  
+    //   if (canvas === mainCanvas && canvas.getObjects().length > 0) {
+    //     const firstObject = canvas.item(0);
+    //     canvas.setActiveObject(firstObject);
+    //   }
+    // canvas.renderAll();
+  
+  
+    // }
+    // canvas.setBackgroundColor(slide.canvas.background || "#ffffff", () => {
+    //   canvas.renderAll();
+
+    // });
+  }
+
+  mainCanvas.clear();
+   fabricObjects = [];
+  var objects = slide.canvas.objects;
+
+  // console.log("Processings:", objects); 
+  for (let i = 0; i < (objects && objects.length); i++) {
+    
+    var obj = objects[i];
+    if (obj.animation && obj.animation.type && obj.animation.duration) {
+      console.log(fabricObj);
+      animateSingleObject(fabricObj, obj.animation.type, obj.animation.duration);
+  }
+    console.log("Processing object:", obj); // Debugging inside loop
+    var fabricObj;
+
+    if (!obj.animation) {
+      obj.animation = {
+          type: 'fadeIn',
+          duration: 1000
+      };
+  }
+
+
+
+    switch (obj.type) {
+      case "video":
+        var videoEl = document.createElement("video");
+        var sourceEl = document.createElement("source");
+        sourceEl.src = obj.src;
+        videoEl.appendChild(sourceEl);
+        var videoObj = new fabric.Image(videoEl, obj);
+        canvas.add(videoObj);
+        videoObj.getElement().play();
+        fabricObj = videoObj;
+
+        break;
+      case "rect":
+        var rectObj = new fabric.Rect(obj);
+        canvas.add(rectObj);
+        fabricObj = rectObj;
+
+        break;
+      case "i-text":
+        var textbox = new fabric.IText(obj.text, obj);
+        canvas.add(textbox);
+        fabricObj = textbox;
+
+        break;
+      case "image":
+        delete obj.clipPath;
+        var imageElement = document.createElement("img");
+
+        imageElement.setAttribute("src", obj.src);
+        // Initiate an Image object
+        var image = new fabric.Image(imageElement);
+        image.set(obj);
+        canvas.add(image);
+        fabricObj = image;
+
+        break;
+      case "circle":
+        var cirObj = new fabric.Circle(obj);
+        canvas.add(cirObj);
+        fabricObj = cirObj;
+
+        break;
+      default:
+        console.log("Unknown object type:", obj.type);
+        break;
+    }
+
+    fabricObjects.push(fabricObj);
+
+    // if (canvas === mainCanvas && canvas.getObjects().length > 0) {
+    //   const firstObject = canvas.item(0);
+    //   canvas.setActiveObject(firstObject);
+    // }
+  if (animate && obj.animation && obj.animation.type && obj.animation.duration) {
+    animateSingleObject(fabricObj, obj.animation.type, obj.animation.duration);
+}
+
+
+  }
+  mainCanvas.requestRenderAll();
+
+}
+
+
 function populateMinimap(data) {
+  console.log("Populating minimap with data:", data);
   let minimap = document.getElementById("minimap");
   minimap.innerHTML = "";
   data.slides.forEach((slide, index) => {
     let item = document.createElement("div");
     item.classList.add("minimap-item");
-    // // Create Plus Icon
+    
+    // Create Plus Icon
     let plusBtn = document.createElement("button");
-    plusBtn.classList.add("add-slide-button"); // New class
-    // ... existing code ...
+    plusBtn.classList.add("add-slide-button");
     let plusIcon = document.createElement("i");
     plusIcon.classList.add("far", "fa-plus");
     plusBtn.appendChild(plusIcon);
-
+    
     // Attach Click Event to Plus Icon
     plusBtn.addEventListener("click", (e) => {
-      e.stopPropagation(); // Prevent triggering the slide click event
+      e.stopPropagation();
       duplicateSlide(index);
     });
 
-    // Create a thumbnail image element
-    let thumbImage = document.createElement("img");
-    thumbImage.classList.add("imag"); // New class
+    let fabricThumbCanvas = thumbCanvasArray[index];
+    
+    if (!fabricThumbCanvas) {
+      // If not, create a new one and store it in the array
+      let thumbCanvas = document.createElement("canvas");
+      thumbCanvas.width = 180;  // 0.1 times the main canvas width
+      thumbCanvas.height = 101.31;  // 0.1 times the main canvas height
+      thumbCanvas.id = `thumbCanvas-${index}`;  // Set the ID attribute based on the index
+      fabricThumbCanvas = new fabric.Canvas(thumbCanvas);
+      thumbCanvasArray[index] = fabricThumbCanvas;  // Store the new Fabric canvas
+    }
+    fabricThumbCanvas.clear();
+    renderSlide(slide, index, thumbCanvasArray[index]);  // Use the existing or new Fabric canvas
 
-    thumbImage.width = 150; // set width to 100 pixels
-    thumbImage.height = 100; // set height to 100 pixels
-    // Create a temporary Fabric static canvas to generate the thumbnail
-    let thumbCanvas = new fabric.Canvas();
-    // Inside your populateMinimap function where you're loading the JSON into a StaticCanvas
-    thumbCanvas.loadFromJSON(
-      slide,
-      () => {
-        console.log(slide);
-        thumbCanvas.setDimensions({ width: 300, height: 200 }); // Set dimensions for thumbnail
-        thumbCanvas.renderAll();
-        let thumbnail = thumbCanvas.toDataURL({
-          format: "png",
-          quality: 0.8,
-        });
-        // Set the Data URL as the src for the thumbnail image
-        thumbImage.src = slide.screenshot;
-      },
-      function (o, object) {
-        console.error(
-          "A problem occurred while loading the object: ",
-          o,
-          object
-        );
-      }
-    );
+    // Scale down the objects by 0.1
+    fabricThumbCanvas.forEachObject(function(obj) {
+      obj.scaleX *= 0.3;
+      obj.scaleY *= 0.3;
+      obj.left *= 0.3;
+      obj.top *= 0.3;
+      obj.setCoords();
+    });
+    fabricThumbCanvas.renderAll();
 
+    item.appendChild(fabricThumbCanvas.getElement());  // Append the canvas element to the DOM
+    
     // Create Play All Button
     let playAllBtn = document.createElement("button");
-    plusBtn.classList.add("play-all-button"); // New class
-
-    playicon = document.createElement("i");
+    playAllBtn.classList.add("play-all-button");
+    let playicon = document.createElement("i");
     playicon.classList.add("far", "fa-play");
     playAllBtn.appendChild(playicon);
-    // playAllBtn.textContent = "Play All";
     playAllBtn.addEventListener("click", () => {
-      // playAllAnimations
-      console.log("playAllAnimations");
-      playAllAnimations(index);
-      mainCanvas.renderAll();
-      // Function to play all animations
+      if (index !== null) {
+        playAllAnimations(Number(index));
+        mainCanvas.renderAll();
+      }
     });
-
-    // Append Play All Button to Minimap Item
-    minimap.appendChild(playAllBtn);
+    
+    // Attach click event to render the slide on the main canvas
     item.addEventListener("click", () => {
-      slidesData.slides[currentSlideIndex].canvas = mainCanvas.toJSON();
-      renderSlide(slide, index, (animate = false));
+      if (index !== null) {
+        switchSlide(Number(index));
+      }
+      renderSlide(slide, currentSlideIndex, mainCanvas);
+      mainCanvas.renderAll();
     });
+    
+    // Append elements to Minimap and Minimap item
+    minimap.appendChild(playAllBtn);
     minimap.appendChild(item);
-
-    // Append thumbnail image and Plus Icon to Minimap Item
-    item.appendChild(thumbImage);
     minimap.appendChild(plusBtn);
   });
 }
+
 
 // Function to Duplicate Slide
 function duplicateSlide(index) {
@@ -252,7 +459,7 @@ function duplicateSlide(index) {
 
     // Update Minimap and Canvas
     populateMinimap(slidesData);
-    renderSlide(newSlide, index + 1);
+    renderSlide(newSlide, mainCanvas,index + 1);
   }
 }
 
@@ -272,7 +479,7 @@ function animateSingleObject(object, type, duration) {
 }
 
 function playAllAnimations(slideIndex) {
-  renderSlide(slidesData.slides[slideIndex], slideIndex, true); // Enable animation
+  renderSlide(slidesData.slides[slideIndex],  slideIndex, mainCanvas,true); // Enable animation
 
   // Play the voice-over script if it exists
   const slide = slidesData.slides[slideIndex];
@@ -280,6 +487,7 @@ function playAllAnimations(slideIndex) {
     speakText(slide.speech);
   }
 }
+
 
 function animateObjects(timestamp) {
   // Initialize the start time
@@ -321,102 +529,48 @@ function animateObjects(timestamp) {
   }
 }
 
-let fabricObjects = [];
-let currentSlideIndex = 0;
 
-function renderSlide(slide, index, animate = false) {
-  if (slidesData && slidesData.slides[currentSlideIndex]) {
-    slidesData.slides[currentSlideIndex].canvas = mainCanvas.toJSON();
-  }
+// Define SVG Icons
+ var deleteIcon = "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg version='1.1' id='Ebene_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='595.275px' height='595.275px' viewBox='200 215 230 470' xml:space='preserve'%3E%3Ccircle style='fill:%23F44336;' cx='299.76' cy='439.067' r='218.516'/%3E%3Cg%3E%3Crect x='267.162' y='307.978' transform='matrix(0.7071 -0.7071 0.7071 0.7071 -222.6202 340.6915)' style='fill:white;' width='65.545' height='262.18'/%3E%3Crect x='266.988' y='308.153' transform='matrix(0.7071 0.7071 -0.7071 0.7071 398.3889 -83.3116)' style='fill:white;' width='65.544' height='262.179'/%3E%3C/g%3E%3C/svg%3E";
 
-  const voiceOverScript = document.getElementById("voiceOverScript");
-  voiceOverScript.value = slide.speech || ""; // If no speech data is available, set it to an empty string
+  var cloneIcon = "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='iso-8859-1'%3F%3E%3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 55.699 55.699' width='100px' height='100px' xml:space='preserve'%3E%3Cpath style='fill:%23010002;' d='M51.51,18.001c-0.006-0.085-0.022-0.167-0.05-0.248c-0.012-0.034-0.02-0.067-0.035-0.1 c-0.049-0.106-0.109-0.206-0.194-0.291v-0.001l0,0c0,0-0.001-0.001-0.001-0.002L34.161,0.293c-0.086-0.087-0.188-0.148-0.295-0.197 c-0.027-0.013-0.057-0.02-0.086-0.03c-0.086-0.029-0.174-0.048-0.265-0.053C33.494,0.011,33.475,0,33.453,0H22.177 c-3.678,0-6.669,2.992-6.669,6.67v1.674h-4.663c-3.678,0-6.67,2.992-6.67,6.67V49.03c0,3.678,2.992,6.669,6.67,6.669h22.677 c3.677,0,6.669-2.991,6.669-6.669v-1.675h4.664c3.678,0,6.669-2.991,6.669-6.669V18.069C51.524,18.045,51.512,18.025,51.51,18.001z M34.454,3.414l13.655,13.655h-8.985c-2.575,0-4.67-2.095-4.67-4.67V3.414z M38.191,49.029c0,2.574-2.095,4.669-4.669,4.669H10.845 c-2.575,0-4.67-2.095-4.67-4.669V15.014c0-2.575,2.095-4.67,4.67-4.67h5.663h4.614v10.399c0,3.678,2.991,6.669,6.668,6.669h10.4 v18.942L38.191,49.029L38.191,49.029z M36.777,25.412h-8.986c-2.574,0-4.668-2.094-4.668-4.669v-8.985L36.777,25.412z M44.855,45.355h-4.664V26.412c0-0.023-0.012-0.044-0.014-0.067c-0.006-0.085-0.021-0.167-0.049-0.249 c-0.012-0.033-0.021-0.066-0.036-0.1c-0.048-0.105-0.109-0.205-0.194-0.29l0,0l0,0c0-0.001-0.001-0.002-0.001-0.002L22.829,8.637 c-0.087-0.086-0.188-0.147-0.295-0.196c-0.029-0.013-0.058-0.021-0.088-0.031c-0.086-0.03-0.172-0.048-0.263-0.053 c-0.021-0.002-0.04-0.013-0.062-0.013h-4.614V6.67c0-2.575,2.095-4.67,4.669-4.67h10.277v10.4c0,3.678,2.992,6.67,6.67,6.67h10.399 v21.616C49.524,43.26,47.429,45.355,44.855,45.355z'/%3E%3C/svg%3E%0A"
+var deleteImg = document.createElement('img');
+deleteImg.src = deleteIcon;
 
-  currentSlideIndex = index;
-  mainCanvas.setWidth(slide.canvas.width || 600);
-  mainCanvas.setHeight(slide.canvas.height || 330);
-  mainCanvas.setBackgroundColor(slide.canvas.background || "#ffffff", () => {
-    mainCanvas.renderAll();
-  });
+var cloneImg = document.createElement('img');
+cloneImg.src = cloneIcon;
 
-  mainCanvas.clear();
-  fabricObjects = [];
-  var objects = slide.canvas.objects;
-  for (var i = 0; i < (objects && objects.length); i++) {
-    var obj = objects[i];
-    var fabricObj;
-
-    if (!obj.animation) {
-      obj.animation = {
-        type: "fadeIn",
-        duration: 1000,
-      };
-    }
-
-    switch (obj.type) {
-      case "video":
-        var videoEl = document.createElement("video");
-        var sourceEl = document.createElement("source");
-        sourceEl.src = obj.src;
-        videoEl.appendChild(sourceEl);
-        var videoObj = new fabric.Image(videoEl, obj);
-        mainCanvas.add(videoObj);
-        videoObj.getElement().play();
-        fabricObj = videoObj;
-
-        break;
-      case "rect":
-        var rectObj = new fabric.Rect(obj);
-        mainCanvas.add(rectObj);
-        fabricObj = rectObj;
-
-        break;
-      case "i-text":
-        var textbox = new fabric.IText(obj.text, obj);
-        mainCanvas.add(textbox);
-        fabricObj = textbox;
-
-        break;
-      case "image":
-        delete obj.clipPath;
-        var imageElement = document.createElement("img");
-
-        imageElement.setAttribute("src", obj.src);
-        // Initiate an Image object
-        var image = new fabric.Image(imageElement);
-        image.set(obj);
-        mainCanvas.add(image);
-        fabricObj = image;
-
-        break;
-      case "circle":
-        var cirObj = new fabric.Circle(obj);
-        mainCanvas.add(cirObj);
-        fabricObj = cirObj;
-
-        break;
-      default:
-        console.log("Unknown object type:", obj.type);
-        break;
-    }
-
-    fabricObjects.push(fabricObj);
-    // Here, we only animate if the animate argument is true.
-    if (
-      animate &&
-      obj.animation &&
-      obj.animation.type &&
-      obj.animation.duration
-    ) {
-      animateSingleObject(
-        fabricObj,
-        obj.animation.type,
-        obj.animation.duration
-      );
-    }
-  }
-  mainCanvas.renderAll();
+// Delete Object Function
+function deleteObject(eventData, transform) {
+  var target = transform.target;
+  var canvas = target.canvas;
+  canvas.remove(target);
+  canvas.requestRenderAll();
 }
+
+// Clone Object Function
+function cloneObject(eventData, transform) {
+  var target = transform.target;
+  var canvas = target.canvas;
+  target.clone(function(cloned) {
+    cloned.left += 10;
+    cloned.top += 10;
+    canvas.add(cloned);
+  });
+}
+
+// Icon Rendering Function
+function renderIcon(icon) {
+  return function(ctx, left, top, styleOverride, fabricObject) {
+    var size = this.cornerSize;
+    ctx.save();
+    ctx.translate(left, top);
+    ctx.rotate(fabric.util.degreesToRadians(fabricObject.angle));
+    ctx.drawImage(icon, -size / 2, -size / 2, size, size);
+    ctx.restore();
+  };
+}
+
 
 function updateControls() {
   let activeObject = mainCanvas.getActiveObject();
@@ -458,6 +612,52 @@ function updateControls() {
       document.getElementById("justifyContent").value =
         activeObject.justifyContent || "flex-start"; // Set default as flex-start
     }
+
+
+
+    if (activeObject.type === 'image') {
+      activeObject.set({
+        cornerSize: 10,
+        cornerColor: 'blue',
+        cornerStyle:'circle',
+        transparentCorners: false,
+        lockUniScaling: true,
+      });
+      
+      // Add delete control
+      activeObject.controls.deleteControl = new fabric.Control({
+        x: 0.5,
+        y: -0.5,
+        offsetY: -16,
+        offsetX: 16,
+        cursorStyle: 'pointer',
+        mouseUpHandler: deleteObject,
+        render: renderIcon(deleteImg),
+        cornerSize: 24
+      });
+
+      // Add clone control
+      activeObject.controls.clone = new fabric.Control({
+        x: -0.5,
+        y: -0.5,
+        offsetY: -16,
+        offsetX: -16,
+        cursorStyle: 'pointer',
+        mouseUpHandler: cloneObject,
+        render: renderIcon(cloneImg),
+        cornerSize: 24
+      });
+      
+      activeObject.on('scaling', function(event) {
+        const obj =activeObject;
+        obj.set({
+          width: obj.width * obj.scaleX,
+          height: obj.height * obj.scaleY,
+          scaleX: 1,
+          scaleY: 1
+        });
+      });
+    }
   } else {
     // Clear the input fields if no object is selected
     document.getElementById("objectLeft").value = "";
@@ -473,6 +673,123 @@ function updateControls() {
     document.getElementById("objectCharSpacing").value = "";
     document.getElementById("objectOpacity").value = "";
   }
+
+ 
+}
+
+
+
+function updateControls() {
+  // Hide all sections by default
+  document.getElementById('addSection').style.display = 'none';
+  document.getElementById('layoutSection').style.display = 'none';
+  document.getElementById('textSection').style.display = 'none';
+  document.getElementById('animationSection').style.display = 'none';
+  document.getElementById('speechSection').style.display = 'none';
+
+  let activeObject = mainCanvas.getActiveObject();
+  if (activeObject) {
+    // Show common sections for all objects
+    document.getElementById('layoutSection').style.display = 'block';
+
+    // For text objects
+    // For text objects
+if (activeObject.type === 'textbox' || "i-text") {
+  document.getElementById('textSection').style.display = 'block';
+
+  // Update controls for text objects
+  document.getElementById("objectFont").value = activeObject.fontFamily || "Arial";
+  document.getElementById("objectFontSize").value = activeObject.fontSize || 16;
+  document.getElementById("objectColor").value = activeObject.fill || "#000000";
+  document.getElementById("boldText").checked = activeObject.fontWeight === "bold";
+  document.getElementById("underlineText").checked = activeObject.textDecoration === "underline";
+  // document.getElementById("textAlign").value = activeObject.textAlign || == 'center';
+  document.getElementById("objectCharSpacing").value = activeObject.charSpacing || 0;
+  document.getElementById("objectOpacity").value = activeObject.opacity || 1;
+}
+
+
+    // For images
+    // For image objects
+if (activeObject.type === 'image') {
+  document.getElementById('addSection').style.display = 'block';
+  
+  // Update controls for image objects
+  document.getElementById("objectWidth").value = activeObject.width * activeObject.scaleX;
+  document.getElementById("objectHeight").value = activeObject.height * activeObject.scaleY;
+  document.getElementById("objectAngle").value = activeObject.angle;
+  document.getElementById("objectScale").value = activeObject.scaleX;
+  document.getElementById("objectOpacity").value = activeObject.opacity || 1;
+
+
+  activeObject.set({
+    cornerSize: 10,
+    cornerColor: 'blue',
+    cornerStyle:'circle',
+    transparentCorners: false,
+    lockUniScaling: true,
+  });
+  
+  // Add delete control
+  activeObject.controls.deleteControl = new fabric.Control({
+    x: 0.5,
+    y: -0.5,
+    offsetY: -16,
+    offsetX: 16,
+    cursorStyle: 'pointer',
+    mouseUpHandler: deleteObject,
+    render: renderIcon(deleteImg),
+    cornerSize: 24
+  });
+
+  // Add clone control
+  activeObject.controls.clone = new fabric.Control({
+    x: -0.5,
+    y: -0.5,
+    offsetY: -16,
+    offsetX: -16,
+    cursorStyle: 'pointer',
+    mouseUpHandler: cloneObject,
+    render: renderIcon(cloneImg),
+    cornerSize: 24
+  });
+  
+  activeObject.on('scaling', function(event) {
+    const obj =activeObject;
+    obj.set({
+      width: obj.width * obj.scaleX,
+      height: obj.height * obj.scaleY,
+      scaleX: 1,
+      scaleY: 1
+    });
+  });
+}
+
+
+    // For animation (if applicable)
+if (activeObject.animation) {
+  document.getElementById('animationSection').style.display = 'block';
+  
+  // Update controls for animation objects
+  document.getElementById("animationType").value = activeObject.animation.type || "none";
+  document.getElementById("animationDuration").value = activeObject.animation.duration || 1000;
+}
+
+
+    // // For voice-over elements
+    // if (activeObject.voiceOver) {
+    //   document.getElementById('speechSection').style.display = 'block';
+    //   // ... update speech controls here
+    // }
+  }
+  // If no object is selected, you may choose to show or hide specific sections
+  else {
+    // Example: Show only 'Add' section when no object is selected
+    document.getElementById('addSection').style.display = 'block';
+
+  }
+
+  // ... update other controls here
 }
 
 mainCanvas.on({
@@ -487,6 +804,8 @@ mainCanvas.on("selection:cleared", function () {
   document.getElementById("objectTop").value = "";
   document.getElementById("objectAngle").value = "";
   document.getElementById("objectScale").value = "";
+
+  // populateMinimap(slidesData);
 });
 // document.getElementById('mainCanvas').addEventListener('click', function(e) {
 //     e.preventDefault();
@@ -717,7 +1036,7 @@ function startPresentation() {
   function playSlide() {
     if (i < slidesData.slides.length) {
       // Render slide and play animation
-      renderSlide(slidesData.slides[i], i, true);
+      renderSlide(slidesData.slides[i], mainCanvas, i, true);
 
       // Play voiceover
       const speech = new SpeechSynthesisUtterance(slidesData.slides[i].speech);
@@ -911,7 +1230,7 @@ document.getElementById("deleteSlide").addEventListener("click", function () {
 
     // Render the new current slide
     if (slidesData.slides.length > 0) {
-      renderSlide(slidesData.slides[currentSlideIndex], currentSlideIndex);
+      renderSlide(slidesData.slides[currentSlideIndex], mainCanvas, currentSlideIndex);
     } else {
       // Clear the canvas if there are no more slides
       mainCanvas.clear();
@@ -959,13 +1278,54 @@ document.getElementById("underlineText").addEventListener("click", function () {
   }
 });
 
+// Align text objects to the left within a group
 document.getElementById("alignLeft").addEventListener("click", function () {
-  const activeObject = mainCanvas.getActiveObject();
-  if (activeObject && activeObject.type === "i-text") {
-    activeObject.set({ textAlign: "left" });
+  const activeGroup = mainCanvas.getActiveObject();
+  if (activeGroup && activeGroup.type === 'activeSelection') {
+    const objects = activeGroup.getObjects();
+    let leftMost = objects[0].left;
+    objects.forEach((obj) => {
+      if (obj.type === "i-text") {
+        if (obj.left < leftMost) {
+          leftMost = obj.left;
+        }
+      }
+    });
+    objects.forEach((obj) => {
+      if (obj.type === "i-text") {
+        obj.set({ left: leftMost });
+      }
+    });
+    activeGroup.setCoords();  // Update the group's bounding box
     mainCanvas.renderAll();
   }
 });
+
+// Align text objects to the right within a group
+document.getElementById("alignRight").addEventListener("click", function () {
+  const activeGroup = mainCanvas.getActiveObject();
+  if (activeGroup && activeGroup.type === 'activeSelection') {
+    const objects = activeGroup.getObjects();
+    let rightMost = objects[0].left + objects[0].width;
+    objects.forEach((obj) => {
+      if (obj.type === "i-text") {
+        let right = obj.left + obj.width;
+        if (right > rightMost) {
+          rightMost = right;
+        }
+      }
+    });
+    objects.forEach((obj) => {
+      if (obj.type === "i-text") {
+        obj.set({ left: rightMost - obj.width });
+      }
+    });
+    activeGroup.setCoords();  // Update the group's bounding box
+    mainCanvas.renderAll();
+  }
+});
+
+
 
 document.getElementById("alignCenter").addEventListener("click", function () {
   const activeObject = mainCanvas.getActiveObject();
@@ -975,13 +1335,13 @@ document.getElementById("alignCenter").addEventListener("click", function () {
   }
 });
 
-document.getElementById("alignRight").addEventListener("click", function () {
-  const activeObject = mainCanvas.getActiveObject();
-  if (activeObject && activeObject.type === "i-text") {
-    activeObject.set({ textAlign: "right" });
-    mainCanvas.renderAll();
-  }
-});
+// document.getElementById("alignRight").addEventListener("click", function () {
+//   const activeObject = mainCanvas.getActiveObject();
+//   if (activeObject && activeObject.type === "i-text") {
+//     activeObject.set({ textAlign: "right" });
+//     mainCanvas.renderAll();
+//   }
+// });
 
 mainCanvas.on("object:modified", function () {
   slidesData.slides[currentSlideIndex].canvas = mainCanvas.toJSON();
@@ -1000,4 +1360,81 @@ document.querySelectorAll(".expandable-section h4").forEach(function (header) {
       }
     });
   });
+});
+
+document.getElementById('distributeHorizontally').addEventListener('click', function() {
+  const activeGroup = mainCanvas.getActiveObject();
+  if (activeGroup && activeGroup.type === 'activeSelection') {
+    const objects = activeGroup.getObjects();
+    objects.sort((a, b) => a.left - b.left);
+    const totalWidth = objects.reduce((acc, obj) => acc + obj.width, 0);
+    const space = (activeGroup.width - totalWidth) / (objects.length - 1);
+
+    let left = objects[0].left;
+    objects.forEach((obj, index) => {
+      obj.set({ left });
+      left += obj.width + space;
+    });
+
+    activeGroup.setCoords();
+    mainCanvas.renderAll();
+  }
+});
+
+// Distribute selected objects vertically
+document.getElementById('distributeVertically').addEventListener('click', function() {
+  const activeGroup = mainCanvas.getActiveObject();
+  if (activeGroup && activeGroup.type === 'activeSelection') {
+    const objects = activeGroup.getObjects();
+    objects.sort((a, b) => a.top - b.top);
+    const totalHeight = objects.reduce((acc, obj) => acc + obj.height, 0);
+    const space = (activeGroup.height - totalHeight) / (objects.length - 1);
+
+    let top = objects[0].top;
+    objects.forEach((obj, index) => {
+      obj.set({ top });
+      top += obj.height + space;
+    });
+
+    activeGroup.setCoords();
+    mainCanvas.renderAll();
+  }
+});
+
+
+
+// Bring the selected object one step forward in the z-index
+document.getElementById('bringForward').addEventListener('click', function() {
+  const activeObject = mainCanvas.getActiveObject();
+  if (activeObject) {
+    mainCanvas.bringForward(activeObject);
+    mainCanvas.renderAll();
+  }
+});
+
+// Send the selected object one step backward in the z-index
+document.getElementById('bringBackward').addEventListener('click', function() {
+  const activeObject = mainCanvas.getActiveObject();
+  if (activeObject) {
+    mainCanvas.sendBackwards(activeObject);
+    mainCanvas.renderAll();
+  }
+});
+
+// Bring the selected object to the front (top of the stack)
+document.getElementById('toFront').addEventListener('click', function() {
+  const activeObject = mainCanvas.getActiveObject();
+  if (activeObject) {
+    mainCanvas.bringToFront(activeObject);
+    mainCanvas.renderAll();
+  }
+});
+
+// Send the selected object to the back (bottom of the stack)
+document.getElementById('toBack').addEventListener('click', function() {
+  const activeObject = mainCanvas.getActiveObject();
+  if (activeObject) {
+    mainCanvas.sendToBack(activeObject);
+    mainCanvas.renderAll();
+  }
 });

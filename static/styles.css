@@ -29,8 +29,8 @@
 
 .minimap-item {
    
-        width: 150px;
-        height: 100px;
+        width: 180px;
+        height: 101.31px;
         background-color: transparent;
         /* ...existing styles... */
   
@@ -80,7 +80,7 @@
 
 #mainCanvas {
     width: 600px;
-    height: 330px;
+    height: 337px;
     border: 1px solid #000;
 }
 
